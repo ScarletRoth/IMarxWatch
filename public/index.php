@@ -1,0 +1,1 @@
+$url = isset($_GET['url']) ? explode('/', $_GET['url']) : ['home'];
