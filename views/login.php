@@ -282,7 +282,7 @@
                 </div>
             <?php endif; ?>
 
-            <form action="/controllers/AuthController.php" method="POST">
+            <form action="/auth/login" method="POST">
                 <input type="hidden" name="action" value="login">
 
                 <div class="form-group">

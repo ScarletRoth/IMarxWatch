@@ -20,7 +20,7 @@ class AuthController
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ../views/login.php');
+            header('Location: /login');
             exit();
         }
 
@@ -30,7 +30,7 @@ class AuthController
 
         // Validation
         if (empty($email) || empty($password)) {
-            header('Location: ../views/login.php?error=empty');
+            header('Location: /login?error=empty');
             exit();
         }
 
@@ -38,7 +38,7 @@ class AuthController
         $user = $this->userModel->findByEmail($email);
 
         if (!$user || !password_verify($password, $user['password_hash'])) {
-            header('Location: ../views/login.php?error=invalid');
+            header('Location: /login?error=invalid');
             exit();
         }
 
@@ -58,9 +58,9 @@ class AuthController
 
         // Redirect based on role
         if ($user['role'] === 'admin') {
-            header('Location: ../views/admin/dashboard.php');
+            header('Location: /');
         } else {
-            header('Location: ../views/home.php');
+            header('Location: /');
         }
         exit();
     }
@@ -71,7 +71,7 @@ class AuthController
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ../views/signup.php');
+            header('Location: /signup');
             exit();
         }
 
@@ -83,23 +83,23 @@ class AuthController
 
         // Validation
         if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
-            header('Location: ../views/signup.php?error=empty');
+            header('Location: /signup?error=empty');
             exit();
         }
 
         if (!$terms) {
-            header('Location: ../views/signup.php?error=terms');
+            header('Location: /signup?error=terms');
             exit();
         }
 
         if ($password !== $confirmPassword) {
-            header('Location: ../views/signup.php?error=password_mismatch');
+            header('Location: /signup?error=password_mismatch');
             exit();
         }
 
         // Check if email already exists
         if ($this->userModel->findByEmail($email)) {
-            header('Location: ../views/signup.php?error=email_exists');
+            header('Location: /signup?error=email_exists');
             exit();
         }
 
@@ -107,10 +107,10 @@ class AuthController
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         if ($this->userModel->create($name, $email, $passwordHash)) {
-            header('Location: ../views/login.php?success=registered');
+            header('Location: /login?success=registered');
             exit();
         } else {
-            header('Location: ../views/signup.php?error=server');
+            header('Location: /signup?error=server');
             exit();
         }
     }
@@ -127,7 +127,7 @@ class AuthController
         // Clear remember me cookie
         setcookie('remember_token', '', time() - 3600, '/');
 
-        header('Location: ../views/login.php');
+        header('Location: /login');
         exit();
     }
 }
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->logout();
             break;
         default:
-            header('Location: ../views/login.php');
+            header('Location: /login');
             exit();
     }
 }

@@ -290,7 +290,7 @@
                 </div>
             <?php endif; ?>
 
-            <form action="/controllers/AuthController.php" method="POST" id="signupForm">
+            <form action="/auth/register" method="POST" id="signupForm">
                 <input type="hidden" name="action" value="register">
 
                 <div class="form-group">

@@ -19,8 +19,8 @@
             <button></button>
         </div>
         <div class="authentication">
-            <a href="login.php"><button class="login_button">Login</button></a>
-            <a href="signup.php"><button class="signup_button">Sign up</button></a>
+            <a href="/login"><button class="login_button">Login</button></a>
+            <a href="/signup"><button class="signup_button">Sign up</button></a>
         </div>
     </header>
     <main>
