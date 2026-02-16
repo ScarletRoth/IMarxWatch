@@ -8,7 +8,26 @@
 </head>
 
 <body>
-
+    <header>
+        <div class="logo">
+            <img src="" alt="">
+        </div>
+        <div class="nav">
+            <button></button>
+            <button></button>
+            <button></button>
+            <button></button>
+        </div>
+        <div class="authentication">
+            <a href="login.php"><button class="login_button">Login</button></a>
+            <a href="signup.php"><button class="signup_button">Sign up</button></a>
+        </div>
+    </header>
+    <main>
+        <section class="hero"></section>
+        <section class="now-showing"></section>
+    </main>
+    <footer></footer>
 </body>
 
 </html>

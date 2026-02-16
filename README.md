@@ -7,6 +7,7 @@ IMarxWatch/
 ├── config/
 │   ├── database.php        # Connexion PDO
 │   └── config.php          # Constantes (URL, paramètres de session)
+│   └── init_db.php 
 ├── controllers/
 │   ├── AuthController.php  # Login, Register, Logout
 │   ├── MovieController.php # Affichage des films et séances
@@ -32,3 +33,19 @@ IMarxWatch/
 │   └── database.sql        # Script de création des tables
 ├── .htaccess               # Pour rediriger toutes les requêtes vers index.php
 └── README.md
+
+**3. Initialiser la base de données**
+```powershell
+cd "C:\Users\Stpn_Angelo\Documents\Ynov\YTrack\PHP\todo-app"
+php init_db.php
+```
+
+**4. Démarrer le serveur PHP**
+```powershell
+php -S localhost:8000 -t public
+```
+
+**5. Ouvrir dans le navigateur**
+```
+http://localhost:8000
+```
