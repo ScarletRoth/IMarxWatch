@@ -265,33 +265,27 @@
         </div>
 
         <div class="signup-card">
-            <?php if (isset($_GET['error'])): ?>
-                <div class="error-message">
-                    <?php
-                    $error = $_GET['error'];
-                    if ($error === 'email_exists') {
-                        echo 'An account with this email already exists';
-                    } elseif ($error === 'password_mismatch') {
-                        echo 'Passwords do not match';
-                    } elseif ($error === 'empty') {
-                        echo 'Please fill in all fields';
-                    } elseif ($error === 'terms') {
-                        echo 'You must agree to the terms and conditions';
-                    } else {
-                        echo 'An error occurred. Please try again.';
-                    }
-                    ?>
-                </div>
+            <?php
+            $error = $_GET['error'] ?? null;
+
+            if ($error === 'email_exists'):
+            ?>
+                <div class="error-message">An account with this email already exists</div>
+            <?php elseif ($error === 'invalid_email'): ?>
+                <div class="error-message">Please enter a valid email address</div>
+            <?php elseif ($error === 'weak_password'): ?>
+                <div class="error-message">Password must be at least 8 characters long</div>
+            <?php elseif ($error === 'password_mismatch'): ?>
+                <div class="error-message">Passwords do not match</div>
+            <?php elseif ($error === 'empty'): ?>
+                <div class="error-message">Please fill in all fields</div>
+            <?php elseif ($error === 'terms'): ?>
+                <div class="error-message">You must agree to the terms and conditions</div>
+            <?php elseif ($error): ?>
+                <div class="error-message">An error occurred. Please try again.</div>
             <?php endif; ?>
 
-            <?php if (isset($_GET['success'])): ?>
-                <div class="success-message">
-                    Account created successfully! You can now sign in.
-                </div>
-            <?php endif; ?>
-
-            <form action="/auth/register" method="POST" id="signupForm">
-                <input type="hidden" name="action" value="register">
+            <form action="/signup" method="POST" id="signupForm">
 
                 <div class="form-group">
                     <label for="name">Full Name</label>
@@ -363,12 +357,12 @@
             </form>
 
             <div class="login-link">
-                Already have an account? <a href="login.php">Sign in</a>
+                Already have an account? <a href="/login">Sign in</a>
             </div>
         </div>
     </div>
 
-    <script>
+    <script>/login
         const passwordInput = document.getElementById('password');
         const strengthBar = document.getElementById('strengthBar');
         const strengthText = document.getElementById('strengthText');
@@ -406,11 +400,16 @@
             };
         }
 
-        // Form validation
         document.getElementById('signupForm').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
             const terms = document.getElementById('terms').checked;
+
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('Password must be at least 8 characters long');
+                return;
+            }
 
             if (password !== confirmPassword) {
                 e.preventDefault();

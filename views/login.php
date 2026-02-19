@@ -282,8 +282,7 @@
                 </div>
             <?php endif; ?>
 
-            <form action="/auth/login" method="POST">
-                <input type="hidden" name="action" value="login">
+            <form action="/login" method="POST">
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -323,7 +322,7 @@
             </form>
 
             <div class="signup-link">
-                Don't have an account? <a href="signup.php">Sign up</a>
+                Don't have an account? <a href="/signup">Sign up</a>
             </div>
         </div>
     </div>
