@@ -3,147 +3,135 @@ SessionManager::init();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo html($movie['title']); ?> - IMarxWatch</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
-            color: #e4e6eb;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .back-link {
-            color: #f59e0b;
-            text-decoration: none;
-            margin-bottom: 30px;
-            display: block;
-        }
-        .movie-header {
-            background: #1e2530;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 40px;
-        }
-        .movie-title {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            color: #ffffff;
-        }
-        .movie-meta {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0;
-            font-size: 14px;
-            color: #8e9199;
-        }
-        .movie-description {
-            margin: 20px 0;
-            line-height: 1.6;
-            color: #d1d5db;
-        }
-        .sessions-section h2 {
-            margin-bottom: 20px;
-            color: #f59e0b;
-        }
-        .sessions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .session-card {
-            background: #1e2530;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .session-time {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 10px 0;
-        }
-        .session-room {
-            font-size: 12px;
-            color: #8e9199;
-            margin: 10px 0;
-        }
-        .session-price {
-            font-size: 16px;
-            color: #f59e0b;
-            font-weight: 600;
-            margin: 10px 0;
-        }
-        .book-btn {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-        .no-sessions {
-            text-align: center;
-            padding: 40px;
-            color: #8e9199;
-            background: #1e2530;
-            border-radius: 8px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/movies-detail.css">
 </head>
+
 <body>
-    <div class="container">
+    <header>
+        <div class="container">
+            <nav>
+                <div class="nav-left">
+                    <button class="hamburger" id="hamburger" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="logo">🎬 IMarxWatch</div>
+                </div>
+                <ul id="navMenu">
+                    <li><a href="/movies">Now Showing</a></li>
+                    <?php if (SessionManager::isAuthenticated()): ?>
+                        <li><a href="/user/bookings">My Bookings</a></li>
+                        <li><a href="/user/profile">Profile</a></li>
+                        <?php if (SessionManager::isAdmin()): ?>
+                            <li><a href="/admin/dashboard">Admin Panel</a></li>
+                        <?php endif; ?>
+                        <li><a href="/logout" class="menu-logout">Logout</a></li>
+                    <?php endif; ?>
+                </ul>
+                <div class="auth-buttons">
+                    <?php if (SessionManager::isAuthenticated()): ?>
+                    <?php else: ?>
+                        <a href="/login" class="btn btn-login">Login</a>
+                        <a href="/signup" class="btn btn-signup">Sign Up</a>
+                    <?php endif; ?>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-container">
         <a href="/movies" class="back-link">← Back to Movies</a>
-        
+
         <div class="movie-header">
-            <h1 class="movie-title">🎬 <?php echo html($movie['title']); ?></h1>
-            <div class="movie-meta">
-                <span>⭐ <?php echo html($movie['rating'] ?? 'Not rated'); ?></span>
-                <span>⏱️ <?php echo html($movie['duration_minutes']); ?> min</span>
-            </div>
-            <div class="movie-description">
-                <?php echo html($movie['description']); ?>
+            <div class="movie-header-content">
+                <div class="movie-poster">
+                    <?php if (!empty($movie['poster_url'])): ?>
+                        <img src="<?php echo html($movie['poster_url']); ?>" alt="Poster for <?php echo html($movie['title']); ?>">
+                    <?php else: ?>
+                        <span class="poster-fallback">🎬</span>
+                    <?php endif; ?>
+                </div>
+                <div class="movie-details">
+                    <h1 class="movie-title">🎬 <?php echo html($movie['title']); ?></h1>
+                    <div class="movie-meta">
+                        <span>⭐ <?php echo html($movie['rating'] ?? 'Not rated'); ?></span>
+                        <span>⏱️ <?php echo html($movie['duration_minutes']); ?> min</span>
+                    </div>
+                    <div class="movie-description">
+                        <?php echo html($movie['description']); ?>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="sessions-section">
             <h2>Available Sessions</h2>
-            
+
             <?php if (empty($sessions)): ?>
                 <div class="no-sessions">
                     <p>No upcoming sessions available for this movie</p>
                 </div>
             <?php else: ?>
-                <div class="sessions-grid">
-                    <?php foreach ($sessions as $session): ?>
-                        <div class="session-card">
-                            <div class="session-time"><?php echo date('H:i', strtotime($session['starts_at'])); ?></div>
-                            <div class="session-date"><?php echo date('d M', strtotime($session['starts_at'])); ?></div>
-                            <div class="session-room">Room: <?php echo html($session['room_name']); ?></div>
-                            <div class="session-price">€<?php echo number_format($session['price'], 2); ?></div>
-                            
-                            <?php if (SessionManager::isAuthenticated()): ?>
-                                <button class="book-btn" onclick="window.location.href='/bookings/<?php echo $session['id']; ?>'">
-                                    Book Seats
-                                </button>
-                            <?php else: ?>
-                                <button class="book-btn" onclick="window.location.href='/login'">
-                                    Login to Book
-                                </button>
-                            <?php endif; ?>
+                <?php
+                $groupedSessions = [];
+                foreach ($sessions as $session) {
+                    $dayKey = date('Y-m-d', strtotime($session['starts_at']));
+                    if (!isset($groupedSessions[$dayKey])) {
+                        $groupedSessions[$dayKey] = [];
+                    }
+                    $groupedSessions[$dayKey][] = $session;
+                }
+                ?>
+                <?php foreach ($groupedSessions as $dayKey => $daySessions): ?>
+                    <div class="session-day">
+                        <div class="session-day-header">
+                            <h3><?php echo date('l, F j, Y', strtotime($dayKey)); ?></h3>
                         </div>
-                    <?php endforeach; ?>
-                </div>
+                        <div class="session-times">
+                            <?php foreach ($daySessions as $session): ?>
+                                <?php $target = SessionManager::isAuthenticated() ? "/bookings/{$session['id']}" : "/login"; ?>
+                                <a class="session-slot" href="<?php echo $target; ?>">
+                                    <span class="session-time"><?php echo date('H:i', strtotime($session['starts_at'])); ?></span>
+                                    <span class="session-meta">Room <?php echo html($session['room_name']); ?></span>
+                                    <span class="session-price">€<?php echo number_format($session['price'], 2); ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             <?php endif; ?>
         </div>
-    </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 IMarxWatch. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
 </body>
+
 </html>

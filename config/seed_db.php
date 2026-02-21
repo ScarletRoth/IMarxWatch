@@ -1,13 +1,13 @@
 <?php
 
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=imarxwatch', 'matteo', 'matteo1711');
+    $pdo = new PDO('mysql:host=localhost;dbname=imarxwatch', 'root', '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $adminEmail = 'admin@imarxwatch.com';
     $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
     $stmt->execute([$adminEmail]);
-    
+
     if (!$stmt->fetch()) {
         $adminPassword = password_hash('Admin@123', PASSWORD_ARGON2ID);
         $pdo->prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)')
@@ -20,13 +20,13 @@ try {
     $stmt = $pdo->prepare('SELECT id FROM rooms WHERE name = ?');
     $stmt->execute(['Salle 1']);
     $roomResult = $stmt->fetch();
-    
+
     if (!$roomResult) {
         $pdo->prepare('INSERT INTO rooms (name, seats_total) VALUES (?, ?)')
             ->execute(['Salle 1', 100]);
         $roomId = $pdo->lastInsertId();
         echo "✓ Room created: Salle 1\n";
-        
+
         for ($row = 'A'; $row <= 'J'; $row++) {
             for ($seat = 1; $seat <= 10; $seat++) {
                 $pdo->prepare('INSERT INTO seats (room_id, seat_row, seat_number) VALUES (?, ?, ?)')
@@ -42,7 +42,7 @@ try {
     $stmt = $pdo->prepare('SELECT id FROM movies WHERE title = ?');
     $stmt->execute(['Inception']);
     $movieResult = $stmt->fetch();
-    
+
     if (!$movieResult) {
         $pdo->prepare('INSERT INTO movies (title, description, duration_minutes, rating, poster_url) VALUES (?, ?, ?, ?, ?)')
             ->execute([
@@ -62,15 +62,15 @@ try {
     $stmt = $pdo->prepare('SELECT id FROM sessions WHERE movie_id = ? AND room_id = ?');
     $stmt->execute([$movieId, $roomId]);
     $sessionsCount = $stmt->rowCount();
-    
+
     if ($sessionsCount == 0) {
         for ($day = 0; $day < 2; $day++) {
             $baseDate = date('Y-m-d', strtotime("+$day days"));
-            
+
             foreach ([14, 17, 20] as $hour) {
                 $startTime = $baseDate . ' ' . sprintf('%02d', $hour) . ':00:00';
                 $price = 12.50;
-                
+
                 $pdo->prepare('INSERT INTO sessions (movie_id, room_id, starts_at, price) VALUES (?, ?, ?, ?)')
                     ->execute([$movieId, $roomId, $startTime, $price]);
             }
@@ -85,7 +85,6 @@ try {
     echo "• Email: admin@imarxwatch.com\n";
     echo "• Password: Admin@123\n";
     echo "• Role: admin\n";
-
 } catch (PDOException $e) {
     echo "✕ Error: " . $e->getMessage() . "\n";
     exit(1);

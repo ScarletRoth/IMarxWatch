@@ -59,7 +59,7 @@ class MovieController
             exit();
         }
 
-        include VIEWS_PATH . '/admin/movie_form.php';
+        include VIEWS_PATH . '/admin/movies/form.php';
     }
 
     public function store()
@@ -114,7 +114,7 @@ class MovieController
                 exit();
             }
 
-            include VIEWS_PATH . '/admin/movie_form.php';
+            include VIEWS_PATH . '/admin/movies/form.php';
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             header('Location: /admin/movies');

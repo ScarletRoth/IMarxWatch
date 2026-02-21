@@ -93,12 +93,12 @@ switch ($route) {
             } else {
                 $authController->profile();
             }
+        } elseif ($action === 'bookings' && $param && is_numeric($param) && isset($segments[3]) && $segments[3] === 'cancel') {
+            $bookingController = new BookingController();
+            $bookingController->cancel($param);
         } elseif ($action === 'bookings') {
             $bookingController = new BookingController();
             $bookingController->userBookings();
-        } elseif ($action === 'bookings' && $param === 'cancel' && isset($segments[3])) {
-            $bookingController = new BookingController();
-            $bookingController->cancel($segments[3]);
         } else {
             header('Location: /user/profile');
         }
@@ -120,8 +120,7 @@ switch ($route) {
 
         if ($action === 'dashboard') {
             $adminController->dashboard();
-        }
-        elseif ($action === 'movies') {
+        } elseif ($action === 'movies') {
             if ($param === 'create') {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $movieController->store();
@@ -141,15 +140,13 @@ switch ($route) {
             } else {
                 $adminController->listMovies();
             }
-        }
-        elseif ($action === 'users') {
+        } elseif ($action === 'users') {
             if ($param && is_numeric($param) && $segments[3] === 'delete') {
                 $adminController->deleteUser($param);
             } else {
                 $adminController->listUsers();
             }
-        }
-        elseif ($action === 'sessions') {
+        } elseif ($action === 'sessions') {
             if ($param === 'create') {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $adminController->storeSession();
@@ -161,8 +158,7 @@ switch ($route) {
             } else {
                 $adminController->listSessions();
             }
-        }
-        elseif ($action === 'bookings') {
+        } elseif ($action === 'bookings') {
             if ($param && is_numeric($param) && $segments[3] === 'delete') {
                 $bookingController->adminDelete($param);
             } else {

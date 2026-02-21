@@ -1,20 +1,37 @@
-<?php SessionManager::init(); SessionManager::requireAdmin(); ?>
+<?php SessionManager::init();
+SessionManager::requireAdmin(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - IMarxWatch</title>
-    <style>
-        body { font-family: Arial; background: #0f1419; color: #e4e6eb; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #374151; padding: 10px; text-align: left; }
-        th { background: #1e2530; }
-        a { color: #f59e0b; }
-    </style>
+    <link rel="stylesheet" href="/css/admin-users-list.css">
 </head>
+
 <body>
-    <h1>Manage Users</h1>
-    <table>
+    <header>
+        <div class="header-content">
+            <div class="logo">🎬 IMarxWatch Admin</div>
+            <div class="user-info">
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/movies">Movies</a>
+        <a href="/admin/users" class="active">Users</a>
+        <a href="/admin/sessions">Sessions</a>
+        <a href="/admin/bookings">Bookings</a>
+        <a href="/">Back to Site</a>
+    </nav>
+
+    <div class="container">
+        <h1>👥 Manage Users</h1>
+        <table>
         <tr>
             <th>Name</th>
             <th>Email</th>
@@ -36,5 +53,7 @@
             </tr>
         <?php endforeach; ?>
     </table>
+    </div>
 </body>
+
 </html>

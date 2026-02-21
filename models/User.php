@@ -17,11 +17,6 @@ class User
         $this->conn = $db;
     }
 
-    /**
-     * Find user by email
-     * @param string $email
-     * @return array|false User data or false if not found
-     */
     public function findByEmail($email)
     {
         $query = "SELECT id, name, email, password_hash, role, created_at 
@@ -36,11 +31,6 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Find user by ID
-     * @param int $id
-     * @return array|false User data or false if not found
-     */
     public function findById($id)
     {
         $query = "SELECT id, name, email, password_hash, role, created_at 
@@ -55,22 +45,12 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Create a new user
-     * @param string $name
-     * @param string $email
-     * @param string $passwordHash
-     * @param string $role
-     * @return bool True on success, false on failure
-     */
     public function create($name, $email, $passwordHash, $role = 'customer')
     {
         $query = "INSERT INTO {$this->table} (name, email, password_hash, role) 
                   VALUES (:name, :email, :password_hash, :role)";
 
         $stmt = $this->conn->prepare($query);
-
-        // Bind parameters
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password_hash', $passwordHash);
@@ -79,12 +59,6 @@ class User
         return $stmt->execute();
     }
 
-    /**
-     * Update user information
-     * @param int $id
-     * @param array $data
-     * @return bool True on success, false on failure
-     */
     public function update($id, $data)
     {
         $allowed = ['name', 'email', 'password_hash', 'role'];
@@ -110,11 +84,6 @@ class User
         return $stmt->execute($values);
     }
 
-    /**
-     * Delete a user
-     * @param int $id
-     * @return bool True on success, false on failure
-     */
     public function delete($id)
     {
         $query = "DELETE FROM {$this->table} WHERE id = :id";
@@ -125,12 +94,6 @@ class User
         return $stmt->execute();
     }
 
-    /**
-     * Get all users
-     * @param int $limit
-     * @param int $offset
-     * @return array List of users
-     */
     public function getAll($limit = 100, $offset = 0)
     {
         $query = "SELECT id, name, email, role, created_at 
@@ -146,10 +109,6 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Count total users
-     * @return int Total number of users
-     */
     public function count()
     {
         $query = "SELECT COUNT(*) as total FROM {$this->table}";
@@ -160,12 +119,6 @@ class User
         return $result['total'];
     }
 
-    /**
-     * Check if email exists
-     * @param string $email
-     * @param int|null $excludeId User ID to exclude from check (for updates)
-     * @return bool True if exists, false otherwise
-     */
     public function emailExists($email, $excludeId = null)
     {
         $query = "SELECT id FROM {$this->table} WHERE email = :email";
@@ -183,5 +136,72 @@ class User
 
         $stmt->execute();
         return $stmt->rowCount() > 0;
+    }
+
+    public function createRememberToken($userId)
+    {
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash('sha256', $token);
+        $expiresAt = date('Y-m-d H:i:s', time() + (86400 * 30));
+
+        $query = "INSERT INTO remember_tokens (user_id, token_hash, expires_at) 
+                  VALUES (:user_id, :token_hash, :expires_at)";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':token_hash', $tokenHash);
+        $stmt->bindParam(':expires_at', $expiresAt);
+
+        if ($stmt->execute()) {
+            return $token;
+        }
+
+        return false;
+    }
+
+    public function getUserByRememberToken($token)
+    {
+        $tokenHash = hash('sha256', $token);
+        
+        $query = "SELECT u.id, u.name, u.email, u.password_hash, u.role, u.created_at 
+                  FROM {$this->table} u
+                  INNER JOIN remember_tokens rt ON u.id = rt.user_id
+                  WHERE rt.token_hash = :token_hash 
+                  AND rt.expires_at > NOW()
+                  LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token_hash', $tokenHash);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteRememberToken($token)
+    {
+        $tokenHash = hash('sha256', $token);
+        
+        $query = "DELETE FROM remember_tokens WHERE token_hash = :token_hash";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token_hash', $tokenHash);
+
+        return $stmt->execute();
+    }
+
+    public function deleteAllRememberTokens($userId)
+    {
+        $query = "DELETE FROM remember_tokens WHERE user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    public function cleanupExpiredTokens()
+    {
+        $query = "DELETE FROM remember_tokens WHERE expires_at < NOW()";
+        $stmt = $this->conn->prepare($query);
+
+        return $stmt->execute();
     }
 }

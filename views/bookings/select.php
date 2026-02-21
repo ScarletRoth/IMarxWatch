@@ -4,233 +4,161 @@ SessionManager::requireAuth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Seats - IMarxWatch</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
-            color: #e4e6eb;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .back-link {
-            color: #f59e0b;
-            text-decoration: none;
-            margin-bottom: 30px;
-            display: block;
-        }
-        .booking-header {
-            background: #1e2530;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-        .booking-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-        .seats-container {
-            background: #1e2530;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .screen {
-            width: 90%;
-            height: 40px;
-            background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
-            margin: 0 auto 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: white;
-            font-weight: bold;
-        }
-        .seats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
-            gap: 8px;
-            margin-bottom: 30px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .seat {
-            width: 30px;
-            height: 30px;
-            background: #374151;
-            border: 1px solid #4b5563;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        .seat:hover {
-            background: #4b5563;
-        }
-        .seat.available:hover {
-            background: #10b981;
-        }
-        .seat.booked {
-            background: #dc2626;
-            cursor: not-allowed;
-        }
-        .seat.selected {
-            background: #f59e0b;
-            border-color: #fbbf24;
-        }
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            font-size: 12px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-        }
-        .booking-form {
-            background: #1e2530;
-            padding: 20px;
-            border-radius: 12px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #d1d5db;
-        }
-        input[type="checkbox"] {
-            margin-right: 8px;
-        }
-        .selected-seats {
-            margin: 20px 0;
-            padding: 15px;
-            background: #2a3340;
-            border-radius: 8px;
-        }
-        .total-price {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f59e0b;
-            margin-top: 15px;
-        }
-        button {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/bookings-select.css">
 </head>
+
 <body>
-    <div class="container">
+    <header>
+        <div class="container">
+            <nav>
+                <div class="nav-left">
+                    <button class="hamburger" id="hamburger" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="logo">🎬 IMarxWatch</div>
+                </div>
+                <ul id="navMenu">
+                    <li><a href="/movies">Now Showing</a></li>
+                    <li><a href="/user/bookings">My Bookings</a></li>
+                    <li><a href="/user/profile">Profile</a></li>
+                    <?php if (SessionManager::isAdmin()): ?>
+                        <li><a href="/admin/dashboard">Admin Panel</a></li>
+                    <?php endif; ?>
+                    <li><a href="/logout" class="menu-logout">Logout</a></li>
+                </ul>
+                <div class="auth-buttons">
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-shell">
         <a href="/movies/<?php echo $session['movie_id']; ?>" class="back-link">← Back to Movie</a>
-        
+
         <div class="booking-header">
-            <h1><?php echo html($session['movie_title']); ?></h1>
+            <div>
+                <p class="booking-subtitle">Select your seats</p>
+                <h1><?php echo html($session['movie_title']); ?></h1>
+            </div>
             <div class="booking-info">
-                <div>
-                    <strong>Time:</strong> <?php echo date('d M H:i', strtotime($session['starts_at'])); ?>
+                <div class="info-chip">
+                    <span class="chip-label">Time</span>
+                    <span class="chip-value"><?php echo date('d M H:i', strtotime($session['starts_at'])); ?></span>
                 </div>
-                <div>
-                    <strong>Room:</strong> <?php echo html($session['room_name']); ?>
+                <div class="info-chip">
+                    <span class="chip-label">Room</span>
+                    <span class="chip-value"><?php echo html($session['room_name']); ?></span>
                 </div>
-                <div>
-                    <strong>Price per seat:</strong> €<?php echo number_format($session['price'], 2); ?>
+                <div class="info-chip">
+                    <span class="chip-label">Price</span>
+                    <span class="chip-value">€<?php echo number_format($session['price'], 2); ?></span>
                 </div>
             </div>
         </div>
 
-        <div class="seats-container">
-            <h3>Select Your Seats</h3>
-            
-            <div class="screen">SCREEN</div>
-            
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #374151;"></div>
-                    Available
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #dc2626;"></div>
-                    Booked
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #f59e0b;"></div>
-                    Selected
-                </div>
-            </div>
+        <form method="POST" action="/bookings/<?php echo $session['id']; ?>" id="bookingForm" class="booking-layout">
+            <input type="hidden" name="session_id" value="<?php echo $session['id']; ?>">
 
-            <form method="POST" action="/bookings/<?php echo $session['id']; ?>" id="bookingForm">
-                <input type="hidden" name="session_id" value="<?php echo $session['id']; ?>">
-                
+            <section class="seat-map-card">
+                <div class="seat-map-header">
+                    <h2>Seat map</h2>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-color legend-available"></span>
+                            Available
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color legend-selected"></span>
+                            Selected
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color legend-booked"></span>
+                            Booked
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screen">SCREEN</div>
+
                 <div class="seats-grid">
                     <?php foreach ($allSeats as $seat): ?>
                         <?php $isBooked = in_array($seat['id'], $bookedSeatIds); ?>
-                        <label class="seat <?php echo $isBooked ? 'booked' : 'available'; ?>" 
-                               title="<?php echo $seat['seat_row'] . $seat['seat_number']; ?>">
-                            <input type="checkbox" 
-                                   name="seats[]" 
-                                   value="<?php echo $seat['id']; ?>"
-                                   <?php echo $isBooked ? 'disabled' : ''; ?>
-                                   class="seat-checkbox"
-                                   style="display: none;">
+                        <label class="seat <?php echo $isBooked ? 'booked' : 'available'; ?>"
+                            title="<?php echo $seat['seat_row'] . $seat['seat_number']; ?>">
+                            <input type="checkbox"
+                                name="seats[]"
+                                value="<?php echo $seat['id']; ?>"
+                                <?php echo $isBooked ? 'disabled' : ''; ?>
+                                class="seat-checkbox">
                             <?php echo $seat['seat_row'] . $seat['seat_number']; ?>
                         </label>
                     <?php endforeach; ?>
                 </div>
+            </section>
 
-                <div class="selected-seats">
-                    <strong>Selected Seats:</strong> <span id="selectedList">None</span>
-                    <div class="total-price">Total: €<span id="totalPrice">0.00</span></div>
+            <aside class="summary-card">
+                <h2>Booking Summary</h2>
+                <div class="summary-row">
+                    <span class="summary-label">Selected Seats</span>
+                    <span class="summary-value" id="selectedList">None</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Number of Tickets</span>
+                    <span class="summary-value" id="ticketCount">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Price per Ticket</span>
+                    <span class="summary-value" id="pricePerTicket">€0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>€<span id="totalPrice">0.00</span></span>
                 </div>
 
-                <button type="submit" onclick="return validateSelection()">Complete Booking</button>
-            </form>
-        </div>
+                <button type="submit" class="confirm-btn" onclick="return validateSelection()">Confirm Booking</button>
+                <p class="summary-note">By confirming this booking, you agree to our terms. All sales are final and non-refundable.</p>
+            </aside>
+        </form>
     </div>
 
+    <footer class="site-footer">
+        <p>&copy; 2026 IMarxWatch. All rights reserved.</p>
+    </footer>
+
     <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
         const pricePerSeat = <?php echo $session['price']; ?>;
         const seatCheckboxes = document.querySelectorAll('.seat-checkbox');
         const selectedList = document.getElementById('selectedList');
         const totalPrice = document.getElementById('totalPrice');
 
-        // Add click handlers to all seat labels
         document.querySelectorAll('label.seat').forEach(label => {
             const checkbox = label.querySelector('.seat-checkbox');
-            
-            // Only allow clicking on available seats
+
             if (!checkbox.disabled) {
                 label.style.cursor = 'pointer';
                 label.addEventListener('click', function(e) {
@@ -242,7 +170,6 @@ SessionManager::requireAuth();
         });
 
         function updateSelection() {
-            // Update visual state of all seats
             seatCheckboxes.forEach(checkbox => {
                 const label = checkbox.closest('label');
                 if (checkbox.checked) {
@@ -252,7 +179,6 @@ SessionManager::requireAuth();
                 }
             });
 
-            // Update selected seats list and total price
             const selected = Array.from(seatCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.closest('label').title);
@@ -264,7 +190,11 @@ SessionManager::requireAuth();
                 selectedList.textContent = selected.join(', ');
                 totalPrice.textContent = (selected.length * pricePerSeat).toFixed(2);
             }
+
+            document.getElementById('ticketCount').textContent = selected.length;
         }
+
+        document.getElementById('pricePerTicket').textContent = `€${pricePerSeat.toFixed(2)}`;
 
         function validateSelection() {
             const selected = Array.from(seatCheckboxes).filter(cb => cb.checked);
@@ -276,4 +206,5 @@ SessionManager::requireAuth();
         }
     </script>
 </body>
+
 </html>

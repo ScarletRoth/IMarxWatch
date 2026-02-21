@@ -123,7 +123,9 @@ class SessionModel
                   FROM seats s
                   WHERE s.room_id = (SELECT room_id FROM {$this->table} WHERE id = :session_id)
                   AND s.id NOT IN (
-                      SELECT seat_id FROM booking_seats WHERE session_id = :session_id
+                      SELECT bs.seat_id FROM booking_seats bs
+                      JOIN bookings b ON bs.booking_id = b.id
+                      WHERE bs.session_id = :session_id AND b.status != 'cancelled'
                   )";
 
         $stmt = $this->conn->prepare($query);
@@ -139,7 +141,9 @@ class SessionModel
         $query = "SELECT bs.seat_id, s.seat_row, s.seat_number
                   FROM booking_seats bs
                   JOIN seats s ON bs.seat_id = s.id
+                  JOIN bookings b ON bs.booking_id = b.id
                   WHERE bs.session_id = :session_id
+                  AND b.status != 'cancelled'
                   ORDER BY s.seat_row, s.seat_number";
 
         $stmt = $this->conn->prepare($query);

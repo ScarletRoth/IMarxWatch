@@ -1,22 +1,37 @@
-<?php SessionManager::init(); SessionManager::requireAdmin(); ?>
+<?php SessionManager::init();
+SessionManager::requireAdmin(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($movie) ? 'Edit' : 'Create'; ?> Movie</title>
-    <style>
-        body { font-family: Arial; background: #0f1419; color: #e4e6eb; padding: 20px; max-width: 600px; margin: 0 auto; }
-        form { background: #1e2530; padding: 20px; border-radius: 8px; }
-        div { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; background: #2a3340; border: 1px solid #374151; color: #e4e6eb; border-radius: 4px; }
-        button { background: #f59e0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-        a { color: #f59e0b; text-decoration: none; margin-left: 10px; }
-    </style>
+    <link rel="stylesheet" href="/css/admin-movies-form.css">
 </head>
+
 <body>
-    <h1><?php echo isset($movie) ? 'Edit Movie' : 'Create New Movie'; ?></h1>
-    <form method="POST" action="<?php echo isset($movie) ? '/admin/movies/'.$movie['id'] : '/admin/movies'; ?>">
+    <header>
+        <div class="header-content">
+            <div class="logo">🎬 IMarxWatch Admin</div>
+            <div class="user-info">
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/movies" class="active">Movies</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/sessions">Sessions</a>
+        <a href="/admin/bookings">Bookings</a>
+        <a href="/">Back to Site</a>
+    </nav>
+
+    <div class="container">
+        <h1><?php echo isset($movie) ? '✏️ Edit Movie' : '🎬 Create New Movie'; ?></h1>
+    <form method="POST" action="<?php echo isset($movie) ? '/admin/movies/' . $movie['id'] : '/admin/movies'; ?>">
         <div>
             <label>Title:</label>
             <input type="text" name="title" value="<?php echo isset($movie) ? html($movie['title']) : ''; ?>" required>
@@ -38,7 +53,9 @@
             <input type="url" name="poster_url" value="<?php echo isset($movie) ? html($movie['poster_url']) : ''; ?>">
         </div>
         <button type="submit"><?php echo isset($movie) ? 'Update' : 'Create'; ?> Movie</button>
-        <a href="/admin/movies">Cancel</a>
+        <a href="/admin/movies" class="cancel-link">Cancel</a>
     </form>
+    </div>
 </body>
+
 </html>

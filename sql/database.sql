@@ -117,3 +117,31 @@ CREATE TABLE IF NOT EXISTS payments (
 		FOREIGN KEY (booking_id) REFERENCES bookings(id)
 		ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS remember_tokens (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	token_hash VARCHAR(255) NOT NULL,
+	expires_at DATETIME NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_remember_tokens_user
+		FOREIGN KEY (user_id) REFERENCES users(id)
+		ON DELETE CASCADE,
+	INDEX idx_token_hash (token_hash),
+	INDEX idx_expires_at (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+INSERT INTO movies (title, description, duration_minutes, rating, poster_url)
+VALUES
+	('Wuthering Heights', 'A passionate and tumultuous love story set against the backdrop of the Yorkshire moors, exploring the intense and destructive relationship between Heathcliff and Catherine Earnshaw.', 136, 'R', '/images/wuthering-heights.png'),
+	('Crime 101', 'An elusive thief, eyeing his final score, encounters a disillusioned insurance broker at her own crossroads. As their paths intertwine, a relentless detective trails them hoping to thwart the multi-million dollar heist they are planning.', 140, 'R', '/images/crime-101.png'),
+	('Send Help', 'An employee and her insufferable boss become stranded on a deserted island, the only survivors of a plane crash. Here, they must overcome past grievances and work together to make it out alive.', 113, 'R', '/images/send-help.png'),
+	('GOAT', 'A small goat with big dreams gets a once-in-a-lifetime shot to join the pros and play roarball, a high-intensity, co-ed, full-contact sport dominated by the fastest, fiercest animals in the world.', 100, 'PG', '/images/goat.png'),
+	('O'' Romeo', 'In post-independence Mumbai, the underworld rises amidst a changing city. This gritty tale explores the criminal landscape of a bygone era, weaving through the streets and shadows of India''s bustling metropolis.', 178, '18', '/images/o-romeo.png'),
+	('The Wrecking Crew', 'Estranged half-brothers Jonny and James reunite after their father''s mysterious death. As they search for the truth, buried secrets reveal a conspiracy threatening to tear their family apart.', 124, '15', '/images/the-wrecking-crew.png'),
+	('Iron Lung', 'In a post-apocalyptic future after "The Quiet Rapture" event, a convict explores a blood ocean on a desolate moon using a submarine called the "Iron Lung" to search for missing stars/planets.', 125, '15', '/images/iron-lung.png'),
+	('The Rip', 'A group of Miami cops discovers a stash of millions in cash, leading to distrust as outsiders learn about the huge seizure, making them question who to rely on.', 113, '15', '/images/the-rip.png'),
+	('Love Me, Love Me', 'New at Milan''s Saint Mary''s, June is swept into secrets and lies: no one is who they seem, and love may hide behind the mask of the last boy she''d fall for.', 99, NULL, '/images/love-me-love-me.png'),
+	('Melania', 'An intimate chronicle offers a rare glimpse into the life of Melania Trump, exploring her role as First Lady and her relationship with the President.', 104, 'PG', '/images/melania.png');

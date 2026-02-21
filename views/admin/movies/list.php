@@ -1,21 +1,38 @@
-<?php SessionManager::init(); SessionManager::requireAdmin(); ?>
+<?php SessionManager::init();
+SessionManager::requireAdmin(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Movies - IMarxWatch</title>
-    <style>
-        body { font-family: Arial; background: #0f1419; color: #e4e6eb; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #374151; padding: 10px; text-align: left; }
-        th { background: #1e2530; }
-        a { color: #f59e0b; }
-    </style>
+    <link rel="stylesheet" href="/css/admin-movies-list.css">
 </head>
+
 <body>
-    <h1>Manage Movies</h1>
-    <a href="/admin/movies/create" style="background: #f59e0b; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">+ Add New Movie</a>
-    <table>
+    <header>
+        <div class="header-content">
+            <div class="logo">🎬 IMarxWatch Admin</div>
+            <div class="user-info">
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/movies" class="active">Movies</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/sessions">Sessions</a>
+        <a href="/admin/bookings">Bookings</a>
+        <a href="/">Back to Site</a>
+    </nav>
+
+    <div class="container">
+        <h1>🎬 Manage Movies</h1>
+        <a href="/admin/movies/create" class="action-button">+ Add New Movie</a>
+        <table>
         <tr>
             <th>Title</th>
             <th>Duration</th>
@@ -34,5 +51,7 @@
             </tr>
         <?php endforeach; ?>
     </table>
+    </div>
 </body>
+
 </html>

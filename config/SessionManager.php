@@ -14,6 +14,7 @@ class SessionManager
             session_start();
         }
         self::checkTimeout();
+        self::checkRememberToken();
         if (!isset($_SESSION['last_regeneration'])) {
             $_SESSION['last_regeneration'] = time();
             session_regenerate_id(true);
@@ -42,6 +43,25 @@ class SessionManager
         }
     }
 
+    private static function checkRememberToken()
+    {
+        if (!self::isAuthenticated() && isset($_COOKIE['remember_token'])) {
+            try {
+                require_once __DIR__ . '/../models/User.php';
+                $database = new Database();
+                $db = $database->getConnection();
+                $userModel = new User($db);
+
+                $user = $userModel->getUserByRememberToken($_COOKIE['remember_token']);
+
+                if ($user) {
+                    self::login($user);
+                }
+            } catch (Exception $e) {
+            }
+        }
+    }
+
     public static function login($user)
     {
         $_SESSION['user_id'] = $user['id'];
@@ -53,8 +73,19 @@ class SessionManager
         session_regenerate_id(true);
     }
 
-    public static function logout()
+    public static function logout($userId = null)
     {
+        if ($userId) {
+            try {
+                require_once __DIR__ . '/../models/User.php';
+                $database = new Database();
+                $db = $database->getConnection();
+                $userModel = new User($db);
+                $userModel->deleteAllRememberTokens($userId);
+            } catch (Exception $e) {
+            }
+        }
+
         session_unset();
         session_destroy();
 

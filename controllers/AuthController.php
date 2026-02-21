@@ -43,8 +43,10 @@ class AuthController
         SessionManager::login($user);
 
         if ($remember) {
-            $token = bin2hex(random_bytes(32));
-            setcookie('remember_token', $token, time() + (86400 * 30), '/', '', SESSION_COOKIE_SECURE, SESSION_COOKIE_HTTPONLY);
+            $token = $this->userModel->createRememberToken($user['id']);
+            if ($token) {
+                setcookie('remember_token', $token, time() + (86400 * 30), '/', '', SESSION_COOKIE_SECURE, SESSION_COOKIE_HTTPONLY);
+            }
         }
 
         if ($user['role'] === 'admin') {
@@ -111,7 +113,8 @@ class AuthController
     public function logout()
     {
         SessionManager::init();
-        SessionManager::logout();
+        $userId = SessionManager::isAuthenticated() ? SessionManager::getCurrentUser()['id'] : null;
+        SessionManager::logout($userId);
 
         header('Location: /login?success=logout');
         exit();
@@ -216,7 +219,7 @@ class AuthController
             }
 
             if ($this->userModel->delete($userId)) {
-                SessionManager::logout();
+                SessionManager::logout($userId);
                 $_SESSION['success'] = 'Account deleted successfully';
                 header('Location: /login?success=account_deleted');
             } else {

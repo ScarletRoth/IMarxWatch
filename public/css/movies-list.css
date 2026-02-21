@@ -1,0 +1,160 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+    color: #e4e6eb;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #f59e0b;
+}
+
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.movie-card {
+    background: #1e2530;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.movie-card:hover {
+    transform: translateY(-8px);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #111827;
+}
+
+.poster-fallback {
+    font-size: 64px;
+}
+
+.movie-info {
+    padding: 15px;
+}
+
+.movie-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    color: #ffffff;
+}
+
+.movie-rating {
+    font-size: 14px;
+    color: #f59e0b;
+    margin-bottom: 10px;
+}
+
+.book-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+}
+
+.back-link {
+    color: #f59e0b;
+    text-decoration: none;
+    margin-bottom: 30px;
+    display: block;
+}
+
+.no-movies {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8e9199;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 0 15px;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    .movie-poster {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .movies-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .movie-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .movie-poster {
+        height: 300px;
+    }
+
+    .movie-info {
+        padding: 12px;
+    }
+
+    .movie-title {
+        font-size: 16px;
+    }
+}

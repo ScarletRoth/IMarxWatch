@@ -105,8 +105,11 @@ class Booking
 
     public function isSeatAvailable($sessionId, $seatId)
     {
-        $query = "SELECT COUNT(*) as count FROM booking_seats
-                  WHERE session_id = :session_id AND seat_id = :seat_id";
+        $query = "SELECT COUNT(*) as count FROM booking_seats bs
+                  JOIN bookings b ON bs.booking_id = b.id
+                  WHERE bs.session_id = :session_id 
+                  AND bs.seat_id = :seat_id
+                  AND b.status != 'cancelled'";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':session_id', $sessionId, PDO::PARAM_INT);

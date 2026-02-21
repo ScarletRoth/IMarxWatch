@@ -1,5 +1,13 @@
 <?php
 
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $env = parse_ini_file($envFile);
+    foreach ($env as $key => $value) {
+        putenv("$key=$value");
+    }
+}
+
 define('APP_NAME', 'IMarxWatch');
 define('APP_URL', 'http://localhost:8000');
 define('APP_ENV', 'development');
@@ -34,26 +42,31 @@ header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Content-Type: text/html; charset=UTF-8');
 
-function html($text) {
+function html($text)
+{
     return htmlspecialchars((string)$text, ENT_QUOTES, 'UTF-8');
 }
 
-function isAuthenticated() {
+function isAuthenticated()
+{
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
-function isAdmin() {
+function isAdmin()
+{
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
 
-function requireAuth() {
+function requireAuth()
+{
     if (!isAuthenticated()) {
         header('Location: /login?error=unauthorized');
         exit();
     }
 }
 
-function requireAdmin() {
+function requireAdmin()
+{
     requireAuth();
     if (!isAdmin()) {
         header('Location: /?error=forbidden');
@@ -61,7 +74,8 @@ function requireAdmin() {
     }
 }
 
-function currentUser() {
+function currentUser()
+{
     return [
         'id' => $_SESSION['user_id'] ?? null,
         'name' => $_SESSION['user_name'] ?? null,
