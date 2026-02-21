@@ -126,7 +126,20 @@ try {
             ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
-    echo "✓ Tables 'users', 'movies', 'genres', 'movie_genres', 'rooms', 'seats', 'sessions', 'bookings', 'booking_seats', 'payments' créées ou déjà existantes.\n";
+    $pdo->exec("CREATE TABLE IF NOT EXISTS remember_tokens (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        token_hash VARCHAR(255) NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_remember_tokens_user
+            FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE,
+        INDEX idx_token_hash (token_hash),
+        INDEX idx_expires_at (expires_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    echo "✓ Tables 'users', 'movies', 'genres', 'movie_genres', 'rooms', 'seats', 'sessions', 'bookings', 'booking_seats', 'payments', 'remember_tokens' creees ou deja existantes.\n";
 
     echo "\n✓ Base de données initialisée avec succès !\n";
 } catch (PDOException $e) {
