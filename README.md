@@ -186,7 +186,3 @@ Acces reserve aux administrateurs pour:
 - Les credentials admin par defaut sont fournis dans les donnees d'exemple
 - Pour des raisons de securite, modifiez les mots de passe par defaut apres l'installation initiale
 - Utilisez HTTPS en production
-
-## Support et Contact
-
-Pour toute question concernant ce projet, veuillez consulter la documentation ou contacter l'equipe de developpement Ynov.
